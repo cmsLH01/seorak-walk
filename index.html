@@ -89,7 +89,7 @@ button:focus-visible{outline:3px solid var(--bar); outline-offset:3px}
 <div class="intro" id="intro">
   <div class="box">
     <h2>소공원에서<br>대청봉까지</h2>
-    <p>설악동 소공원에서 천불동계곡을 지나 대청봉까지 내 속도대로 올라가요. 앞으로 버튼을 누를 때마다 한 걸음씩 나아가고, 멈춰 있을 때 화면을 좌우로 끌면 옆 풍경을 둘러볼 수 있어요.</p>
+    <p>설악동 소공원에서 천불동계곡을 지나 대청봉까지 내 속도대로 올라가요. 앞으로 버튼을 누를 때마다 한 걸음씩 나아가요.</p>
     <p class="note">구간마다 그곳의 이야기가 위에 떠요. 다시 보려면 위쪽 막대를 누르세요.</p>
     <p class="note">사진은 실제 장소를 찍은 것이 아닌 AI 연출 이미지예요. 구간 순서와 안내 문구는 실제 등산로 기준이에요. 사진 속 표지석 글씨도 AI가 만든 것이라 실제와 다를 수 있어요.</p>
     <button id="start">출발하기</button>
@@ -149,7 +149,10 @@ function stepTo(t){ target=Math.max(0,Math.min(N-1,t)); }
 walkBtn.onclick=()=>{ if (target>=N-1 && p>=N-1){ stepTo(0); p=0; return; } stepTo(Math.round(target)+1); };
 backBtn.onclick=()=>stepTo(Math.round(target)-1);
 addEventListener("keydown",e=>{ if(e.key==="ArrowUp"||e.key===" ") { e.preventDefault(); walkBtn.click(); } if(e.key==="ArrowDown") backBtn.click(); });
-document.getElementById("start").onclick=()=>{ document.getElementById("intro").remove(); setTimeout(hideHint,9000); };
+document.getElementById("start").onclick=()=>{
+  try{ const el=document.documentElement; const rq=el.requestFullscreen||el.webkitRequestFullscreen; if(rq) rq.call(el).catch(()=>{}); }catch(e){}
+  document.getElementById("intro").remove(); setTimeout(hideHint,9000);
+};
 document.querySelector(".top").addEventListener("click",()=>{ const nt=document.getElementById("note"); clearTimeout(window._ntT); nt.classList.toggle("hide"); });
 
 const sm=(a,b,x)=>{ const t=Math.min(1,Math.max(0,(x-a)/(b-a))); return t*t*(3-2*t); };
