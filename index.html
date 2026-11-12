@@ -30,11 +30,12 @@ body{font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-s
 }
 .top .row{color:rgba(255,255,255,.88)}
 .top.dim{opacity:.5}
-.top .note{transition:opacity .5s, max-height .5s, margin .5s; max-height:4.5em; overflow:hidden}
+.top .note{transition:opacity .5s, max-height .5s, margin .5s; max-height:13em; overflow:hidden}
 .top .note.hide{opacity:0; max-height:0; margin-top:0}
 .top h1{font-family:"Gowun Batang",serif; font-size:20px; margin:0; line-height:1.3}
 .top .row{display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-top:2px}
 .top .note{font-size:13.5px; line-height:1.5; margin-top:4px}
+.top .note b{display:block; font-weight:600; font-size:14.5px; margin-bottom:1px}
 .track{height:5px; background:rgba(127,127,127,.3); border-radius:3px; margin-top:8px; position:relative}
 .track i{position:absolute; left:0; top:0; bottom:0; background:var(--bar); border-radius:3px; width:0}
 .track b{position:absolute; top:-2px; width:2px; height:9px; background:var(--muted); opacity:.7}
@@ -72,7 +73,7 @@ button:focus-visible{outline:3px solid var(--bar); outline-offset:3px}
 
 <div class="top">
   <h1 id="title">소공원 → 신흥사</h1>
-  <div class="note" id="note"></div>
+  <div class="note" id="note"><b id="noteT"></b><span id="noteB"></span></div>
   <div class="row"><span id="step">1 / 7 구간</span><span id="pct">0%</span></div>
   <div class="track" id="track"><i id="bar"></i></div>
 </div>
@@ -88,7 +89,7 @@ button:focus-visible{outline:3px solid var(--bar); outline-offset:3px}
   <div class="box">
     <h2>소공원에서<br>대청봉까지</h2>
     <p>설악동 소공원에서 천불동계곡을 지나 대청봉까지 내 속도대로 올라가요. 앞으로 버튼을 누를 때마다 한 걸음씩 나아가고, 멈춰 있을 때 화면을 좌우로 끌면 옆 풍경을 둘러볼 수 있어요.</p>
-    <p class="note">휴대폰을 가로로 돌리면 더 넓게 보여요.</p>
+    <p class="note">구간마다 그곳의 이야기가 위에 떠요. 다시 보려면 위쪽 막대를 누르세요.</p>
     <p class="note">사진은 실제 장소를 찍은 것이 아닌 AI 연출 이미지예요. 구간 순서와 안내 문구는 실제 등산로 기준이에요. 사진 속 표지석 글씨도 AI가 만든 것이라 실제와 다를 수 있어요.</p>
     <button id="start">출발하기</button>
   </div>
@@ -101,14 +102,15 @@ const STAGES = ["소공원 → 신흥사","신흥사 → 비선대","비선대 �
 const CLOSE_START=new Date(2026,10,15), CLOSE_END=new Date(2026,11,15,23,59), NOW=new Date();
 const closedNow = NOW>=CLOSE_START && NOW<=CLOSE_END;
 const NOTES = [
-  "설악동 소공원에서 출발해요.",
-  "소공원 안쪽의 신흥사를 지나 비선대로 가는 완만한 계곡길이에요.",
-  "비선대부터 천불동계곡의 기암 사이로 들어가요."+(NOW<=CLOSE_END?(closedNow?" 실제 비선대~희운각 구간은 지금 산불 예방으로 통제 중이에요(12월 15일까지).":" 실제 비선대~희운각 구간은 11월 15일~12월 15일 통제돼요."):""),
-  "천불동계곡을 따라 희운각대피소까지 올라가요.",
-  "희운각대피소를 지나 소청봉으로 오르는 가파른 구간이에요.",
-  "소청봉에서 중청봉까지 능선을 따라 걸어요.",
-  "설악산 최고봉, 해발 1,708m 대청봉에 도착해요."
+  {t:"설악, 눈 덮인 바위의 산", b:"화강암 봉우리가 눈처럼 희다고 해서 설악(雪嶽)이라 불렸어요. 소공원에서 대청봉까지는 하루를 꼬박 걷는 길이에요."},
+  {t:"1,400년 된 절, 이름이 세 번 바뀌었어요", b:"652년 자장율사가 향성사로 세웠고, 불탄 뒤 의상이 선정사로 다시 지었어요. 1642년 또 불타자 세 스님이 같은 꿈을 꾸고 점지받은 자리에 세운 절이 지금의 신흥사예요."},
+  {t:"신선이 하늘로 올라간 바위", b:"아래 와선대에서 누워 경치를 즐기던 신선이 이곳에서 승천했다고 해서 비선대(飛仙臺)예요. 예부터 시인묵객이 찾아와 바위에 글씨를 새겨 놓았어요."},
+  {t:"천 개의 불상이 늘어선 골짜기", b:"양쪽 기암절벽이 천 개의 불상을 세워 놓은 듯하다고 해서 천불동(千佛洞)이에요. 산세가 험해 문을 닫아건 골짜기라는 뜻으로 문닫이골이라고도 불렸어요."},
+  {t:"한 사람이 사재로 지은 대피소", b:"1969년 2월 대청봉 북사면 '죽음의 계곡'에서 한국산악회 대원 10명이 숨졌어요. 그해 10월 최태묵 선생이 여기 산장이 있었다면 막을 수 있었다며 사재와 후원으로 대피소를 지었고, 그의 호 희운(喜雲)이 이름이 됐어요."},
+  {t:"설악에서 가장 높은 곳의 암자", b:"소청봉 아래 해발 1,244m에 봉정암이 있어요. 부처의 진신사리를 모신 5대 적멸보궁 중 하나라, 불자와 등산객 모두 한 번은 오르고 싶어 하는 곳이에요."},
+  {t:"남한에서 세 번째로 높은 봉우리", b:"해발 1,708m. 한라산, 지리산 천왕봉 다음이에요. 맑은 날엔 동해가 내려다보이고, 10월 말이면 첫눈이 내려요."}
 ];
+const ELEV = [200, 250, 300, 600, 1050, 1550, 1676, 1708];
 const seq = []; FRAMES.forEach((vs,si)=>vs.forEach(o=>seq.push({src:o.src, ar:o.ar, stage:si})));
 const N = seq.length;
 
@@ -146,7 +148,8 @@ function stepTo(t){ target=Math.max(0,Math.min(N-1,t)); }
 walkBtn.onclick=()=>{ if (target>=N-1 && p>=N-1){ stepTo(0); p=0; return; } stepTo(Math.round(target)+1); };
 backBtn.onclick=()=>stepTo(Math.round(target)-1);
 addEventListener("keydown",e=>{ if(e.key==="ArrowUp"||e.key===" ") { e.preventDefault(); walkBtn.click(); } if(e.key==="ArrowDown") backBtn.click(); });
-document.getElementById("start").onclick=()=>{ document.getElementById("intro").remove(); setTimeout(hideHint,7000); };
+document.getElementById("start").onclick=()=>{ document.getElementById("intro").remove(); setTimeout(hideHint,9000); };
+document.querySelector(".top").addEventListener("click",()=>{ const nt=document.getElementById("note"); clearTimeout(window._ntT); nt.classList.toggle("hide"); });
 
 const sm=(a,b,x)=>{ const t=Math.min(1,Math.max(0,(x-a)/(b-a))); return t*t*(3-2*t); };
 let last=performance.now();
@@ -165,10 +168,19 @@ function frame(t){
 
   const cur = fade>0.5 ? seq[j] : seq[i];
   document.getElementById("title").textContent=STAGES[cur.stage];
-  const nt=document.getElementById("note"); if(nt.dataset.s!=cur.stage){ nt.textContent=NOTES[cur.stage]; nt.dataset.s=cur.stage; nt.classList.remove("hide"); clearTimeout(window._ntT); window._ntT=setTimeout(()=>nt.classList.add("hide"),4500); }
+  const nt=document.getElementById("note");
+  if(nt.dataset.s!=cur.stage){
+    const st=NOTES[cur.stage]; document.getElementById("noteT").textContent=st.t;
+    let body=st.b;
+    if(cur.stage===3 && NOW<=CLOSE_END) body += closedNow ? " (실제 비선대~희운각 구간은 지금 산불 예방으로 통제 중이에요.)" : " (실제로는 11월 15일~12월 15일 통제돼요.)";
+    document.getElementById("noteB").textContent=body;
+    nt.dataset.s=cur.stage; nt.classList.remove("hide"); clearTimeout(window._ntT); window._ntT=setTimeout(()=>nt.classList.add("hide"),9000);
+  }
+  const ep=p/(N-1)*7, ei=Math.min(6,Math.floor(ep));
+  const el=Math.round(ELEV[ei]+(ELEV[ei+1]-ELEV[ei])*(ep-ei));
   document.querySelector(".top").classList.toggle("dim", !moving);
   document.getElementById("step").textContent=`${cur.stage+1} / ${STAGES.length} 구간 · ${Math.round(p)+1} / ${N} 걸음`;
-  document.getElementById("pct").textContent=Math.round(p/(N-1)*100)+"%";
+  document.getElementById("pct").textContent="약 "+el.toLocaleString()+"m";
   document.getElementById("bar").style.width=(p/(N-1)*100)+"%";
   walkBtn.textContent = (target>=N-1 && p>=N-1) ? "처음으로" : "앞으로";
   backBtn.disabled = target<=0;
